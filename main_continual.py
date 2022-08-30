@@ -38,6 +38,7 @@ def run_bash_command(args):
             args[i] = " ".join(a)
     command = ("python3 main_pretrain.py", *args)
     command = " ".join(command)
+    print(command)
     p = subprocess.Popen(command, shell=True)
     p.wait()
 
@@ -72,6 +73,8 @@ if __name__ == "__main__":
         task_args = copy.deepcopy(args)
 
         # add pretrained model arg
+        print("task_idx : ", task_idx)
+        print("start_task_idx : ", start_task_idx)
         if task_idx != 0 and task_idx != start_task_idx:
             task_args.pop("--resume_from_checkpoint", None)
             task_args.pop("--pretrained_model", None)
@@ -84,5 +87,4 @@ if __name__ == "__main__":
 
         task_args["--task_idx"] = str(task_idx)
         task_args = dict_to_list(task_args)
-
         run_bash_command(task_args)

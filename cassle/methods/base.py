@@ -427,7 +427,7 @@ class BaseModel(pl.LightningModule):
             }
 
             self.log_dict(metrics, on_epoch=True, sync_dist=True)
-
+            self.disable_knn_eval = True
             if not self.disable_knn_eval:
                 self.knn(
                     train_features=outs_online_eval["online_eval_feats"].detach(),

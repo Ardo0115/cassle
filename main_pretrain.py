@@ -34,6 +34,7 @@ from cassle.utils.pretrain_dataloader import (
     prepare_n_crop_transform,
     prepare_transform,
     split_dataset,
+    construct_memory
 )
 
 
@@ -212,6 +213,19 @@ def main():
     )
 
     model.current_task_idx = args.task_idx
+
+    if args.er:
+        memory_task_dataset = construct_memory(train_dataset,
+            tasks=tasks,
+            current_task_idx=args.task_idx,
+            num_tasks=args.num_tasks,
+            split_strategy=args.split_strategy,
+        )
+        model.memory = prepare_dataloader(
+            memory_task_dataset,
+            batch_size=args.batch_size,
+            num_workers=args.num_workers,
+        )
 
     if args.dali:
         trainer.fit(model, val_dataloaders=val_loader)

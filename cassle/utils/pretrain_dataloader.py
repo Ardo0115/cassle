@@ -1,4 +1,5 @@
 import os
+from posixpath import split
 import random
 from pathlib import Path
 from typing import Any, Callable, Iterable, List, Optional, Sequence, Type, Union
@@ -11,14 +12,32 @@ from torch.utils.data.dataset import Dataset, Subset
 from torchvision import transforms
 from torchvision.datasets import STL10, ImageFolder
 
+def construct_memory(
+    dataset: Dataset, current_task_idx: List[int], num_tasks: int, split_strategy: str, tasks: list = None
+):
+    if split_strategy == "class":
+        assert len(dataset.classes) == sum([len(t) for t in tasks])
+        mask_old = [False] * len(dataset.targets)
+        for old_task_idx in range(current_task_idx):
+            mask_old = [(c in tasks[old_task_idx] or previous_mask) for c, previous_mask in zip(dataset.targets, mask_old)]
+        old_indexes = torch.tensor(mask_old).nonzero()
+        memory_dataset = Subset(dataset, old_indexes)
+    else:
+        raise NotImplementedError
+
+    return memory_dataset
+
+
+        
+
 
 def split_dataset(
     dataset: Dataset, task_idx: List[int], num_tasks: int, split_strategy: str, tasks: list = None
 ):
     if split_strategy == "class":
         assert len(dataset.classes) == sum([len(t) for t in tasks])
-        mask = [(c in tasks[task_idx]) for c in dataset.targets]
-        indexes = torch.tensor(mask).nonzero()
+        mask = [(c in tasks[task_idx]) for c in dataset.targets] # dataset의 target label 하나씩 보면서 현재 task에 해당하는 label은 True로 masking
+        indexes = torch.tensor(mask).nonzero() # 결국 indexes는 dataset.targets의 어떤 index가 현재 task에 해당하는지 저장된 list
         task_dataset = Subset(dataset, indexes)
     elif split_strategy == "data":
         assert tasks is None

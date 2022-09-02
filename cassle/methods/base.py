@@ -59,6 +59,7 @@ class BaseModel(pl.LightningModule):
         lr_decay_steps: Sequence = None,
         disable_knn_eval: bool = True,
         knn_k: int = 20,
+        er : bool = False,
         **kwargs,
     ):
         """Base model that implements all basic operations for all self-supervised methods.
@@ -129,6 +130,8 @@ class BaseModel(pl.LightningModule):
         self.num_tasks = num_tasks
         self.split_strategy = split_strategy
 
+        self.er = er
+
         self.domains = [
             "real",
             "quickdraw",
@@ -175,6 +178,10 @@ class BaseModel(pl.LightningModule):
 
         if not self.disable_knn_eval:
             self.knn = WeightedKNNClassifier(k=knn_k, distance_fx="euclidean")
+
+        # Set memory
+        if self.er:
+            self.memory = {}
 
     @staticmethod
     def add_model_specific_args(parent_parser: ArgumentParser) -> ArgumentParser:
@@ -243,6 +250,9 @@ class BaseModel(pl.LightningModule):
         # knn eval
         parser.add_argument("--disable_knn_eval", action="store_true")
         parser.add_argument("--knn_k", default=20, type=int)
+
+        # memory args
+        parser.add_argument("--er", action='store_true')
 
         return parent_parser
 
@@ -401,6 +411,17 @@ class BaseModel(pl.LightningModule):
 
         _, X_task, _ = batch[f"task{self.current_task_idx}"]
         X_task = [X_task] if isinstance(X_task, torch.Tensor) else X_task
+        if self.er and self.current_task_idx > 0:
+            for batch_memory in self.memory:
+                _, X_task_memory, _ = batch_memory
+                X_task_memory = [X_task_memory] if isinstance(X_task_memory, torch.Tensor) else X_task_memory
+                break
+            for X_aug, X_aug_mem in zip(X_task, X_task_memory):
+                X_aug_mem = X_aug_mem.cuda()
+                torch.cat([X_aug, X_aug_mem], dim=0)
+
+        # if self.er and self.current_task_idx > 0:
+        #     X_task
 
         # check that we received the desired number of crops
         assert len(X_task) == self.num_crops + self.num_small_crops

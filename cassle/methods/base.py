@@ -412,16 +412,16 @@ class BaseModel(pl.LightningModule):
         _, X_task, _ = batch[f"task{self.current_task_idx}"]
         X_task = [X_task] if isinstance(X_task, torch.Tensor) else X_task
         if self.er and self.current_task_idx > 0:
+            # pick 1 batch (same batch size with X_task) from memory
             for batch_memory in self.memory:
                 _, X_task_memory, _ = batch_memory
                 X_task_memory = [X_task_memory] if isinstance(X_task_memory, torch.Tensor) else X_task_memory
                 break
+            # expand X_task to contain samples from memory
+            # ex) X_task : [[(256,32,32,3)], [(256,32,32,3)]] => [[(512,32,32,3)],[(512,32,32,3)]]
             for X_aug, X_aug_mem in zip(X_task, X_task_memory):
                 X_aug_mem = X_aug_mem.cuda()
                 torch.cat([X_aug, X_aug_mem], dim=0)
-
-        # if self.er and self.current_task_idx > 0:
-        #     X_task
 
         # check that we received the desired number of crops
         assert len(X_task) == self.num_crops + self.num_small_crops

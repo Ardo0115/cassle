@@ -220,6 +220,7 @@ def main():
             current_task_idx=args.task_idx,
             num_tasks=args.num_tasks,
             split_strategy=args.split_strategy,
+            memory_size = args.memory_size
         )
         model.memory = prepare_dataloader(
             memory_task_dataset,

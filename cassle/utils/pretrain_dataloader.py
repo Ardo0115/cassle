@@ -13,14 +13,16 @@ from torchvision import transforms
 from torchvision.datasets import STL10, ImageFolder
 
 def construct_memory(
-    dataset: Dataset, current_task_idx: List[int], num_tasks: int, split_strategy: str, tasks: list = None
-):
+        dataset: Dataset, current_task_idx: List[int], num_tasks: int, split_strategy: str, memory_size : int, tasks: list = None,
+    ):
     if split_strategy == "class":
         assert len(dataset.classes) == sum([len(t) for t in tasks])
         mask_old = [False] * len(dataset.targets)
         for old_task_idx in range(current_task_idx):
             mask_old = [(c in tasks[old_task_idx] or previous_mask) for c, previous_mask in zip(dataset.targets, mask_old)]
         old_indexes = torch.tensor(mask_old).nonzero()
+        indices_for_mem = torch.tensor(random.sample(range(len(old_indexes)), memory_size))
+        old_indexes = old_indexes[indices_for_mem]
         memory_dataset = Subset(dataset, old_indexes)
     else:
         raise NotImplementedError

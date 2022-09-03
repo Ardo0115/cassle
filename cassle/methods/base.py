@@ -253,6 +253,7 @@ class BaseModel(pl.LightningModule):
 
         # memory args
         parser.add_argument("--er", action='store_true')
+        parser.add_argument("--memory_size", type=int) 
 
         return parent_parser
 

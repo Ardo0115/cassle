@@ -3,9 +3,9 @@ python3 main_continual.py \
     --encoder resnet18 \
     --data_dir $DATA_DIR \
     --split_strategy class \
-    --task_idx 1 \
+    --task_idx 0 \
     --max_epochs 500 \
-    --num_tasks 5 \
+    --num_tasks 1 \
     --max_epochs 500 \
     --gpus 0 \
     --precision 16 \
@@ -18,14 +18,14 @@ python3 main_continual.py \
     --lr 0.4 \
     --classifier_lr 0.1 \
     --weight_decay 1e-5 \
-    --batch_size 256 \
-    --num_workers 4 \
+    --batch_size 512 \
+    --num_workers 5 \
     --brightness 0.8 \
     --contrast 0.8 \
     --saturation 0.8 \
     --hue 0.2 \
     --gaussian_prob 0.0 0.0 \
-    --name simclr-cifar100-contrastive-er-500 \
+    --name simclr-cifar100-offline \
     --project cassle \
     --entity dohoon-kim \
     --wandb \
@@ -33,9 +33,4 @@ python3 main_continual.py \
     --method simclr \
     --temperature 0.2 \
     --proj_hidden_dim 2048 \
-    --output_dim 256 \
-    --distiller contrastive \
-    --pretrained_model $PRETRAINED_PATH
-    --er
-    --memory_size 500
-    --log_every_n_steps 39
+    --output_dim 256

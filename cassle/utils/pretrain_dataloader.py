@@ -21,8 +21,9 @@ def construct_memory(
         for old_task_idx in range(current_task_idx):
             mask_old = [(c in tasks[old_task_idx] or previous_mask) for c, previous_mask in zip(dataset.targets, mask_old)]
         old_indexes = torch.tensor(mask_old).nonzero()
-        indices_for_mem = torch.tensor(random.sample(range(len(old_indexes)), memory_size))
-        old_indexes = old_indexes[indices_for_mem]
+        if memory_size > 0:
+            indices_for_mem = torch.tensor(random.sample(range(len(old_indexes)), memory_size))
+            old_indexes = old_indexes[indices_for_mem]
         memory_dataset = Subset(dataset, old_indexes)
     else:
         raise NotImplementedError

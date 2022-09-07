@@ -420,9 +420,9 @@ class BaseModel(pl.LightningModule):
                 break
             # expand X_task to contain samples from memory
             # ex) X_task : [[(256,32,32,3)], [(256,32,32,3)]] => [[(512,32,32,3)],[(512,32,32,3)]]
-            for X_aug, X_aug_mem in zip(X_task, X_task_memory):
+            for i, (X_aug, X_aug_mem) in enumerate(zip(X_task, X_task_memory)):
                 X_aug_mem = X_aug_mem.cuda()
-                torch.cat([X_aug, X_aug_mem], dim=0)
+                X_task[i] = torch.cat([X_aug, X_aug_mem], dim=0)
 
         # check that we received the desired number of crops
         assert len(X_task) == self.num_crops + self.num_small_crops

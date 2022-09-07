@@ -32,9 +32,9 @@ def base_distill_wrapper(Method=object):
             return feats, self.frozen_projector(feats)
 
         def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
-            _, (X1, X2), _ = batch[f"task{self.current_task_idx}"]
 
             out = super().training_step(batch, batch_idx)
+            _, (X1, X2), _ = batch[f"task{self.current_task_idx}"]
 
             frozen_feats1, frozen_z1 = self.frozen_forward(X1)
             frozen_feats2, frozen_z2 = self.frozen_forward(X2)

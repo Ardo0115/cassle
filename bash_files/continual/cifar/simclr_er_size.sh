@@ -37,3 +37,4 @@ python3 main_continual.py \
     --pretrained_model $PRETRAINED_PATH
     --er
     --memory_size 500
+    --log_every_n_steps 39

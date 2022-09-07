@@ -36,3 +36,4 @@ python3 main_continual.py \
     --output_dim 256 \
     --distiller contrastive \
     --pretrained_model $PRETRAINED_PATH
+    --log_every_n_steps 39

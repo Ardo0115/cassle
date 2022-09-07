@@ -19,13 +19,13 @@ python3 main_continual.py \
     --classifier_lr 0.1 \
     --weight_decay 1e-5 \
     --batch_size 256 \
-    --num_workers 4 \
+    --num_workers 0 \
     --brightness 0.8 \
     --contrast 0.8 \
     --saturation 0.8 \
     --hue 0.2 \
     --gaussian_prob 0.0 0.0 \
-    --name simclr-cifar100-contrastive-er-500 \
+    --name simclr-cifar100-er-5000 \
     --project cassle \
     --entity dohoon-kim \
     --wandb \
@@ -33,9 +33,8 @@ python3 main_continual.py \
     --method simclr \
     --temperature 0.2 \
     --proj_hidden_dim 2048 \
-    --output_dim 256 \
-    --distiller contrastive \
+    --output_dim 256
     --pretrained_model $PRETRAINED_PATH
     --er
-    --memory_size 500
+    --memory_size 5000
     --log_every_n_steps 39

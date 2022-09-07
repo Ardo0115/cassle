@@ -214,7 +214,7 @@ def main():
 
     model.current_task_idx = args.task_idx
 
-    if args.er:
+    if args.er and args.task_idx > 0:
         memory_task_dataset = construct_memory(train_dataset,
             tasks=tasks,
             current_task_idx=args.task_idx,

@@ -36,3 +36,5 @@ python3 main_continual.py \
     --output_dim 256
     --pretrained_model $PRETRAINED_PATH
     --er
+    --memory_size -1
+    --log_every_n_steps 39
